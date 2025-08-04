@@ -118,7 +118,7 @@ def create_avaluo_catastral_workflow() -> Workflow:
         step_id="valuation_review",
         name="Revisión de Valuación",
         description="Revisión técnica del avalúo por supervisor",
-        required_role="valuation_supervisor",
+        approvers=["valuation_supervisor"],
         timeout_hours=24
     )
     

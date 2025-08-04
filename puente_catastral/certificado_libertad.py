@@ -145,7 +145,7 @@ def create_certificado_libertad_workflow() -> Workflow:
     step_results_check >> step_analyze_liens >> step_lien_decision
     step_results_check >> step_not_found
     step_lien_decision >> step_generate_clean >> step_sign >> step_completed
-    step_lien_decision >> step_generate_report >> step_sign
+    step_lien_decision >> step_generate_report >> step_sign >> step_completed
     
     # Agregar todos los pasos al workflow
     for step in [step_collect_criteria, step_search_records, step_results_check, step_analyze_liens,
