@@ -123,11 +123,11 @@ def create_actualizacion_catastral_workflow() -> Workflow:
     )
     
     # Paso 8: Verificar sincronización
-    step_verify_sync = ActionStep(
+    step_verify_sync = ConditionalStep(
         step_id="verify_synchronization",
         name="Verificar Sincronización",
         description="Verificar que la sincronización fue exitosa",
-        action=lambda instance, context: {"status": "verified", "sync_success": True}
+        condition=lambda instance, context: context.get("sync_success", True)
     )
     
     # Paso 9: Enviar notificación
@@ -161,6 +161,7 @@ def create_actualizacion_catastral_workflow() -> Workflow:
     step_collect_data >> step_validate_data >> step_search_rpp >> step_auto_linking >> step_linking_decision
     step_linking_decision >> step_update_catastral >> step_sync_rpp >> step_verify_sync >> step_notification >> step_completed
     step_linking_decision >> step_manual_review
+    step_verify_sync >> step_rollback
     
     # Agregar todos los pasos al workflow
     for step in [step_collect_data, step_validate_data, step_search_rpp, step_auto_linking, 
