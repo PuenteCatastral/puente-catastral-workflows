@@ -153,6 +153,7 @@ def create_avaluo_catastral_workflow() -> Workflow:
     step_collect_request >> step_search_records >> step_records_check
     step_records_check >> step_market_data >> step_valuation >> step_review >> step_generate_report >> step_completed
     step_records_check >> step_incomplete
+    step_review >> step_correction
     
     # Agregar todos los pasos al workflow
     for step in [step_collect_request, step_search_records, step_records_check, step_market_data,
