@@ -1,7 +1,6 @@
 name: puente-catastral-workflows
-version: "1.0.0"
-description: "Workflows unificados para modernización catastral con vinculación bidireccional Catastro-RPP"
-author: "Equipo PUENTE Catastral"
+version: 1.0.0
+description: Workflows unificados para modernización catastral con vinculación bidireccional Catastro-RPP
 
 workflows:
   - module: puente_catastral.catastral_workflows
