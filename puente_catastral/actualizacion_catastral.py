@@ -84,7 +84,8 @@ def create_actualizacion_catastral_workflow() -> Workflow:
         step_id="search_rpp_records",
         name="Buscar Registros RPP",
         description="Búsqueda automática de registros correspondientes en RPP",
-        action=lambda instance, context: {"status": "found", "rpp_records": ["sample_record"]}
+        service_name="puente_rpp_service",
+        endpoint="/api/rpp/search-records"
     )
     
     # Paso 4: Proceso de vinculación automática
@@ -108,7 +109,8 @@ def create_actualizacion_catastral_workflow() -> Workflow:
         step_id="update_catastral_record",
         name="Actualizar Registro Catastral",
         description="Actualizar información en sistema catastral",
-        action=lambda instance, context: {"status": "updated"}
+        service_name="puente_catastral_service",
+        endpoint="/api/catastro/update-record"
     )
     
     # Paso 7: Sincronizar al RPP
@@ -116,7 +118,8 @@ def create_actualizacion_catastral_workflow() -> Workflow:
         step_id="sync_to_rpp",
         name="Sincronizar al RPP",
         description="Sincronización bidireccional con RPP",
-        action=lambda instance, context: {"status": "synchronized"}
+        service_name="puente_rpp_service",
+        endpoint="/api/rpp/sync-record"
     )
     
     # Paso 8: Verificar sincronización

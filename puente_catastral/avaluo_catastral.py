@@ -84,7 +84,8 @@ def create_avaluo_catastral_workflow() -> Workflow:
         step_id="search_property_records",
         name="Buscar Registros de Propiedad",
         description="Búsqueda de información completa en Catastro y RPP",
-        action=lambda instance, context: {"status": "found", "records_complete": True}
+        service_name="puente_linking_service",
+        endpoint="/api/unified/search-for-valuation"
     )
     
     # Paso 3: Verificar registros
@@ -98,9 +99,10 @@ def create_avaluo_catastral_workflow() -> Workflow:
     # Paso 4: Recopilar datos de mercado
     step_market_data = IntegrationStep(
         step_id="gather_market_data",
-        name="Recopilar Datos de Mercado",
+        name="Recopilar Datos de Mercado", 
         description="Obtener información de mercado inmobiliario de la zona",
-        action=lambda instance, context: {"status": "gathered", "market_data": "sample_data"}
+        service_name="market_data_service",
+        endpoint="/api/market/zone-analysis"
     )
     
     # Paso 5: Realizar valuación

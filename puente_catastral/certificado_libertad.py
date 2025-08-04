@@ -75,7 +75,8 @@ def create_certificado_libertad_workflow() -> Workflow:
         step_id="search_unified_records",
         name="Buscar Registros Unificados",
         description="Búsqueda simultánea en Catastro y RPP",
-        action=lambda instance, context: {"status": "found", "property_found": True}
+        service_name="puente_linking_service",
+        endpoint="/api/unified/search-property"
     )
     
     # Paso 3: Verificar resultados
