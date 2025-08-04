@@ -140,28 +140,22 @@ def create_certificado_libertad_workflow() -> Workflow:
         description="No se pudo localizar la propiedad con los criterios proporcionados"
     )
     
-    # Agregar pasos al workflow
-    workflow.add_step(step_collect_criteria)
-    workflow.add_step(step_search_records)
-    workflow.add_step(step_results_check)
-    workflow.add_step(step_analyze_liens)
-    workflow.add_step(step_lien_decision)
-    workflow.add_step(step_generate_clean)
-    workflow.add_step(step_generate_report)
-    workflow.add_step(step_sign)
-    workflow.add_step(step_completed)
-    workflow.add_step(step_not_found)
+    # Definir flujo usando operador >>
+    step_collect_criteria >> step_search_records >> step_results_check
+    step_results_check >> step_analyze_liens >> step_lien_decision
+    step_results_check >> step_not_found
+    step_lien_decision >> step_generate_clean >> step_sign >> step_completed
+    step_lien_decision >> step_generate_report >> step_sign
     
-    # Definir flujo
-    workflow.add_transition(step_collect_criteria, step_search_records)
-    workflow.add_transition(step_search_records, step_results_check)
-    workflow.add_transition(step_results_check, step_analyze_liens, condition=True)
-    workflow.add_transition(step_results_check, step_not_found, condition=False)
-    workflow.add_transition(step_analyze_liens, step_lien_decision)
-    workflow.add_transition(step_lien_decision, step_generate_clean, condition=True)
-    workflow.add_transition(step_lien_decision, step_generate_report, condition=False)
-    workflow.add_transition(step_generate_clean, step_sign)
-    workflow.add_transition(step_generate_report, step_sign)
-    workflow.add_transition(step_sign, step_completed)
+    # Agregar todos los pasos al workflow
+    for step in [step_collect_criteria, step_search_records, step_results_check, step_analyze_liens,
+                step_lien_decision, step_generate_clean, step_generate_report, step_sign, 
+                step_completed, step_not_found]:
+        workflow.add_step(step)
+    
+    # Configurar workflow
+    workflow.set_start(step_collect_criteria)
+    workflow.build_graph()
+    workflow.validate()
     
     return workflow

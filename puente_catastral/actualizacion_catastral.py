@@ -157,30 +157,20 @@ def create_actualizacion_catastral_workflow() -> Workflow:
         description="Sincronización falló, cambios revertidos automáticamente"
     )
     
-    # Agregar pasos al workflow
-    workflow.add_step(step_collect_data)
-    workflow.add_step(step_validate_data)
-    workflow.add_step(step_search_rpp)
-    workflow.add_step(step_auto_linking)
-    workflow.add_step(step_linking_decision)
-    workflow.add_step(step_update_catastral)
-    workflow.add_step(step_sync_rpp)
-    workflow.add_step(step_verify_sync)
-    workflow.add_step(step_notification)
-    workflow.add_step(step_completed)
-    workflow.add_step(step_manual_review)
-    workflow.add_step(step_rollback)
+    # Definir flujo usando operador >>
+    step_collect_data >> step_validate_data >> step_search_rpp >> step_auto_linking >> step_linking_decision
+    step_linking_decision >> step_update_catastral >> step_sync_rpp >> step_verify_sync >> step_notification >> step_completed
+    step_linking_decision >> step_manual_review
     
-    # Definir flujo
-    workflow.add_transition(step_collect_data, step_validate_data)
-    workflow.add_transition(step_validate_data, step_search_rpp)
-    workflow.add_transition(step_search_rpp, step_auto_linking)
-    workflow.add_transition(step_auto_linking, step_linking_decision)
-    workflow.add_transition(step_linking_decision, step_update_catastral, condition=True)
-    workflow.add_transition(step_linking_decision, step_manual_review, condition=False)
-    workflow.add_transition(step_update_catastral, step_sync_rpp)
-    workflow.add_transition(step_sync_rpp, step_verify_sync)
-    workflow.add_transition(step_verify_sync, step_notification)
-    workflow.add_transition(step_notification, step_completed)
+    # Agregar todos los pasos al workflow
+    for step in [step_collect_data, step_validate_data, step_search_rpp, step_auto_linking, 
+                step_linking_decision, step_update_catastral, step_sync_rpp, step_verify_sync,
+                step_notification, step_completed, step_manual_review, step_rollback]:
+        workflow.add_step(step)
+    
+    # Configurar workflow
+    workflow.set_start(step_collect_data)
+    workflow.build_graph()
+    workflow.validate()
     
     return workflow

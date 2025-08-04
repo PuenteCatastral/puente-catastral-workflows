@@ -149,26 +149,19 @@ def create_avaluo_catastral_workflow() -> Workflow:
         description="La valuación fue rechazada y requiere correcciones"
     )
     
-    # Agregar pasos al workflow
-    workflow.add_step(step_collect_request)
-    workflow.add_step(step_search_records)
-    workflow.add_step(step_records_check)
-    workflow.add_step(step_market_data)
-    workflow.add_step(step_valuation)
-    workflow.add_step(step_review)
-    workflow.add_step(step_generate_report)
-    workflow.add_step(step_completed)
-    workflow.add_step(step_incomplete)
-    workflow.add_step(step_correction)
+    # Definir flujo usando operador >>
+    step_collect_request >> step_search_records >> step_records_check
+    step_records_check >> step_market_data >> step_valuation >> step_review >> step_generate_report >> step_completed
+    step_records_check >> step_incomplete
     
-    # Definir flujo
-    workflow.add_transition(step_collect_request, step_search_records)
-    workflow.add_transition(step_search_records, step_records_check)
-    workflow.add_transition(step_records_check, step_market_data, condition=True)
-    workflow.add_transition(step_records_check, step_incomplete, condition=False)
-    workflow.add_transition(step_market_data, step_valuation)
-    workflow.add_transition(step_valuation, step_review)
-    workflow.add_transition(step_review, step_generate_report)
-    workflow.add_transition(step_generate_report, step_completed)
+    # Agregar todos los pasos al workflow
+    for step in [step_collect_request, step_search_records, step_records_check, step_market_data,
+                step_valuation, step_review, step_generate_report, step_completed, step_incomplete, step_correction]:
+        workflow.add_step(step)
+    
+    # Configurar workflow
+    workflow.set_start(step_collect_request)
+    workflow.build_graph()
+    workflow.validate()
     
     return workflow
